@@ -1,0 +1,6 @@
+venv/
+*.properties
+*.json
+.env
+*.md
+*.zip
