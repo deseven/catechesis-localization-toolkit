@@ -3,4 +3,5 @@ venv/
 *.json
 .env
 *.md
+!README.md
 *.zip
