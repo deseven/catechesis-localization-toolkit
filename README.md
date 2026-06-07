@@ -2,7 +2,13 @@
 
 A Python tool for managing [Catechesis](https://store.steampowered.com/app/2593320/Catechesis/) localization using Google Sheets as a translation backend and an LLM for machine translation/validation.
 
-The workflow is: parse source files → upload to Google Sheets → translate with LLM → refine manually → validate → build localized files.
+The workflow is the following:
+- parse source files
+- upload to Google Sheets
+- translate with LLM (optional)
+- translate/refine manually, alone or with others
+- validate with LLM (optional)
+- build localized files
 
 ## Installation
 
