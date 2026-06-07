@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """
 Catechesis Localization Toolkit
-Part 1: Parse game files and upload to Google Sheets
-Part 2: Translate strings using LLMs
 """
 
 import os
@@ -421,7 +419,7 @@ Return only JSON, try to maintain original style of writing. The string to trans
 
     # Add translation context if provided
     if translation_context:
-        system_prompt += f"\n\n{translation_context}"
+        system_prompt += f"\n\nUse the following transaction context to improve the translation.\n\n{translation_context}"
     
     # Format batch as JSON for user message
     user_message = json.dumps(batch, ensure_ascii=False, indent=2)
@@ -644,7 +642,7 @@ Translated string contains a typo in the word "example" and also exclamation mar
 
     # Add translation context if provided
     if translation_context:
-        system_prompt += f"\n\n{translation_context}"
+        system_prompt += f"\n\nUse the following transaction context to improve the translation.\n\n{translation_context}"
     
     # Format entries for validation
     user_message = ""

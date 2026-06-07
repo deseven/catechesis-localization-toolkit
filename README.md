@@ -1,6 +1,6 @@
 # Catechesis Localization Toolkit
 
-A Python tool for managing [Catechesis](https://store.steampowered.com/app/2593320/Catechesis/) localization using Google Sheets as a translation backend and an LLM for machine translation.
+A Python tool for managing [Catechesis](https://store.steampowered.com/app/2593320/Catechesis/) localization using Google Sheets as a translation backend and an LLM for machine translation/validation.
 
 The workflow is: parse source files → upload to Google Sheets → translate with LLM → refine manually → validate → build localized files.
 
@@ -14,26 +14,7 @@ pip install -r requirements.txt
 
 ## Configuration
 
-Copy `.env.example` to `.env` and fill in the values:
-
-```bash
-cp .env.example .env
-```
-
-| Variable | Required | Description |
-|---|---|---|
-| `GOOGLE_CREDS` | always | Path to Google service account credentials JSON |
-| `GOOGLE_SPREADSHEET_ID` | always | ID from the spreadsheet URL |
-| `SOURCE_LANG` | always | Source language code (e.g. `en`) |
-| `TARGET_LANG` | always | Target language code (e.g. `ru`) |
-| `SOURCE_DIR` | `parse`, `build` | Directory with source `.properties` files |
-| `TARGET_DIR` | `build` | Output directory for localized files |
-| `OPENAI_API_ENDPOINT` | `translate`, `validate` | OpenAI-compatible API endpoint |
-| `OPENAI_API_KEY` | `translate`, `validate` | API key |
-| `OPENAI_MODEL` | `translate`, `validate` | Model name |
-| `OPENAI_TEMPERATURE` | optional | Sampling temperature (default: `0.2`) |
-| `TRANSLATION_CONTEXT` | optional | Path to a context file passed to the LLM |
-| `PACK_LOCALIZATION` | optional | Set to `true` to zip the output after `build` |
+Copy `.env.example` to `.env` and edit the new file, following the comments inside.
 
 ### Google Sheets setup
 
