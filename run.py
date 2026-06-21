@@ -8,6 +8,7 @@ import sys
 import json
 import re
 import zipfile
+import difflib
 from pathlib import Path
 from dotenv import load_dotenv
 from google.oauth2 import service_account
@@ -239,7 +240,7 @@ def update_existing_sheet(service, spreadsheet_id, sheet_name, source_lang, new_
             }
     
     updates = []
-    updated_keys = []
+    updated_keys = []  # list of dicts: {'key', 'old', 'new'}
     added_count = 0
     
     # Check for updates to existing keys
@@ -252,7 +253,11 @@ def update_existing_sheet(service, spreadsheet_id, sheet_name, source_lang, new_
                     'range': f"{sheet_name}!B{row_num}",
                     'values': [[value]]
                 })
-                updated_keys.append(key)
+                updated_keys.append({
+                    'key': key,
+                    'old': existing_keys[key]['source'],
+                    'new': value
+                })
         else:
             # New key - will be added at the end
             added_count += 1
@@ -308,6 +313,40 @@ def populate_new_sheet(service, spreadsheet_id, sheet_name, data):
     except HttpError as err:
         print(f"Error populating sheet {sheet_name}: {err}")
         return 0
+
+
+def print_diff(old, new):
+    """Print a highlighted diff between old and new strings."""
+    if old == new:
+        return
+    
+    # Use difflib to get opcodes for a word/character-level diff
+    matcher = difflib.SequenceMatcher(None, old, new)
+    
+    # Build highlighted strings using ANSI escape codes
+    RED = '\033[91m'
+    GREEN = '\033[92m'
+    BOLD = '\033[1m'
+    DIM = '\033[2m'
+    RESET = '\033[0m'
+    
+    old_highlighted = ''
+    new_highlighted = ''
+    
+    for tag, i1, i2, j1, j2 in matcher.get_opcodes():
+        if tag == 'equal':
+            old_highlighted += old[i1:i2]
+            new_highlighted += new[j1:j2]
+        elif tag == 'delete':
+            old_highlighted += f"{RED}{BOLD}{old[i1:i2]}{RESET}"
+        elif tag == 'insert':
+            new_highlighted += f"{GREEN}{BOLD}{new[j1:j2]}{RESET}"
+        elif tag == 'replace':
+            old_highlighted += f"{RED}{BOLD}{old[i1:i2]}{RESET}"
+            new_highlighted += f"{GREEN}{BOLD}{new[j1:j2]}{RESET}"
+    
+    print(f"      {DIM}old:{RESET} {old_highlighted}")
+    print(f"      {DIM}new:{RESET} {new_highlighted}")
 
 
 def parse_and_upload(config):
@@ -372,8 +411,9 @@ def parse_and_upload(config):
             stats['keys_updated'] += len(updated_keys)
             stats['keys_added'] += added
             print(f"  Updated {len(updated_keys)} existing key(s), added {added} new key(s)")
-            for key in updated_keys:
-                print(f"    ~ {key}")
+            for updated in updated_keys:
+                print(f"    ~ {updated['key']}")
+                print_diff(updated['old'], updated['new'])
         else:
             # Create new sheet
             print(f"  Creating new sheet...")

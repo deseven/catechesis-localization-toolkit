@@ -3,6 +3,7 @@ venv/
 *.properties
 *.json
 .env
+*.txt
 *.md
 !README.md
 *.zip
